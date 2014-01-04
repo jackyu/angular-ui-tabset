@@ -1,0 +1,48 @@
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Angular UI tabsets challenge</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <script src="assets/scripts/tabs.js"></script>
+    <script src="assets/scripts/app.js"></script>
+
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="assets/css/app.css" rel="stylesheet">
+</head>
+
+<body ng-controller="MainCtrl">
+  
+  <div class="container content">
+    
+    <!-- 動態建立 tab -->
+    <form role="form" class="add-container">
+      <div class="form-group">
+        <label for="tabTitleInput">請輸入標籤名稱:</label>
+        <input type="text" class="form-control" id="tabTitleInput" ng-model="tab.title">
+      </div>
+      <div class="form-group">
+        <label for="tabContentInput">請輸入標籤內容</label>
+        <input type="text" class="form-control" id="tabContentInput" ng-model="tab.content">
+      </div>
+      
+      <div class="pull-right">
+        <button type="button" class="btn btn-primary" ng-click="add()">加入</button>
+      </div>
+    </form>
+    
+    
+    <!-- Tab 結果顯示 -->
+    <tabset>
+      <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
+        {{tab.content}}
+      </tab>
+    </tabset>
+    
+  </div>
+  
+</body>
+
+</html>
