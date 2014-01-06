@@ -8,6 +8,21 @@
 - 點擊 tab 右方的 x 圖示: 移除 tab 和對應內容
 - need_remove: boolean，true 表示加上移除功能，false 表示不加上移除功能
 
+### 執行方式
+
+先啟動 server
+
+```
+$ node server.js
+```
+
+打開瀏覽器，輸入
+
+```
+localhost: 7777
+```
+
+即可看到執行畫面
 
 ### 原始資料
 
