@@ -16,7 +16,8 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
   var ctrl = this,
   // 建立 tabs 陣列存放建立的 tab element
   // 是要用來建立 tab content 內容用
-      tabs = ctrl.tabs = $scope.tabs = [];
+      tabs = ctrl.tabs = $scope.tabs = [],
+      removed = false;
 
   // 將選擇的 tab 設定為選取狀態
   // 先將所有的 tab active 設為 false，再針對選擇的 tab 設為選取狀態
@@ -58,11 +59,6 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
     tabs.splice(index, 1);
   };
 
-  // 取得目前的 tabset 設定的刪除 tab 狀態值
-  ctrl.canRemoveTab = function canRemoveTab() {
-    return $scope.removed;
-  };
-
 }])
 
 
@@ -76,8 +72,7 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
     scope: {},
     controller: 'TabsetController',
     templateUrl: 'template/tabs/tabset.html',
-    link: function(scope, element, attrs) {
-      console.log( 'tabset link!!' );
+    link: function(scope, element, attrs, ctrl) {
       // 取得 dom element 身上設定的相關屬性值
       
       // Whether tabs appear vertically stacked. (Default: false)
@@ -86,8 +81,13 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
       scope.justified = angular.isDefined(attrs.justified) ? scope.$parent.$eval(attrs.justified) : false;
       // Navigation type. Possible values are 'tabs' and 'pills'. (Default: 'tabs')
       scope.type = angular.isDefined(attrs.type) ? scope.$parent.$eval(attrs.type) : 'tabs';
-      // 
+
       scope.removed = angular.isDefined(attrs.removed) ? scope.$parent.$eval(attrs.removed) : false;
+      // 監聽 removed 屬性是否改變，如果有改變則將 scope 的 removed 值變更
+      scope.$parent.$watch(attrs.removed, function(value){
+        console.log( 'tabset watch attrs.removed', value );
+        ctrl.removed = !! value;
+      });
     }
   };
 })
@@ -207,18 +207,20 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
         // 等建立 tab content 內容時再執行建立
         scope.$transcludeFn = transclude;
 
-        // 設定是否允許刪除的預設值
-        scope.removed = tabsetCtrl.canRemoveTab();
-        // if ( attrs.removed ) {
-        //   // 監聽 remove 是否改變，如果有改變則將 scope 的 remove 值變更
-        //   scope.$parent.$watch($parse(attrs.removed), function(value){
-        //     scope.removed = !! value;
-        //   })
-        // };
+        // 監聽 tabsetCtrl 的 remove 是否改變，如果有改變則將 scope 的 remove 值變更
+        // 這邊有一點要注意:
+        // 因為監聽的值是來自於其他物件的值，所以要用表達式的方式將值傳回再監聽該值
+        scope.$watch(
+          // 監聽 tabsetCtrl 的 removed 值
+          function(){
+            return tabsetCtrl.removed;
+          }, 
+          function(){
+            scope.removed = !! tabsetCtrl.removed;
+        })
 
         // tab 移除的事件處理
         scope.remove = function(){
-          console.log( scope.removed );
           if( scope.removed ) {
             tabsetCtrl.removeTab(scope);
             elm.remove();

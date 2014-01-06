@@ -34,9 +34,18 @@
     </form>
     
     
+    <div class="options-container">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-model="removed" ng-change="changeRemove()"> 允許刪除 tab
+        </label>
+      </div>
+    </div>
+    
+    
     <!-- Tab 結果顯示 -->
-    <tabset removed="true">
-      <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled" removed="tab.removed">
+    <tabset removed="removed">
+      <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
         {{tab.content}}
       </tab>
     </tabset>

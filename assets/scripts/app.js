@@ -1,8 +1,7 @@
 var app = angular.module('app', ['ui.bootstrap.tabs']);
 
 app.controller('MainCtrl', ['$scope', function($scope){
-	
-	//
+		
 	$scope.tabs = [
     { title:"Default tab1", content:"Default content 1" },
     { title:"Default tab2", content:"Default content 2" },
@@ -12,9 +11,14 @@ app.controller('MainCtrl', ['$scope', function($scope){
   ];
 
 	$scope.tab = {};
+	$scope.removed = true;
 	
 	$scope.add = function(){
 		$scope.tabs.push( $scope.tab );
+	}
+
+	$scope.changeRemove = function(){
+		console.log( 'change remove', this.removed );
 	}
 
 }]);

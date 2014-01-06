@@ -8,7 +8,7 @@
 	
 	margin-left: 0;
 	margin-right: 0;
-	margin-bottom: 40px;
+	margin-bottom: 20px;
 
 	padding: 15px;
 
@@ -20,4 +20,12 @@
 	box-shadow: none;
 
 	width: 600px;
+}
+
+.options-container {
+	margin-left: 0;
+	margin-right: 0;
+	margin-bottom: 20px;
+	padding: 5px;
+	background-color: #fff;
 }
