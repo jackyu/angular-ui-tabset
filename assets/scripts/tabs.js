@@ -42,6 +42,7 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
   // 移除 tab
   // 這裡的 tab 物件是從 tab directive 傳過來的
   ctrl.removeTab = function removeTab(tab) {
+
     // 先找出目前傳入 tab 的索引值
     var index = tabs.indexOf(tab);
 
@@ -54,11 +55,14 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
     }
 
     // 將傳入的 tab 從 tabs 陣列中移除
-    // tabs.splice(index, 1);
-    $scope.$apply(function(){
-      tabs.splice(index, 1);
-    });
+    tabs.splice(index, 1);
   };
+
+  // 取得目前的 tabset 設定的刪除 tab 狀態值
+  ctrl.canRemoveTab = function canRemoveTab() {
+    return $scope.removed;
+  };
+
 }])
 
 
@@ -73,6 +77,7 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
     controller: 'TabsetController',
     templateUrl: 'template/tabs/tabset.html',
     link: function(scope, element, attrs) {
+      console.log( 'tabset link!!' );
       // 取得 dom element 身上設定的相關屬性值
       
       // Whether tabs appear vertically stacked. (Default: false)
@@ -81,6 +86,8 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
       scope.justified = angular.isDefined(attrs.justified) ? scope.$parent.$eval(attrs.justified) : false;
       // Navigation type. Possible values are 'tabs' and 'pills'. (Default: 'tabs')
       scope.type = angular.isDefined(attrs.type) ? scope.$parent.$eval(attrs.type) : 'tabs';
+      // 
+      scope.removed = angular.isDefined(attrs.removed) ? scope.$parent.$eval(attrs.removed) : false;
     }
   };
 })
@@ -159,7 +166,6 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
           // 同時連帶改變 tabset 中的 tabs 陣列設定
           if (active) {
             tabsetCtrl.select(scope);
-
             // 觸發 tab 定義的 select 屬性函式
             scope.onSelect();
           } else {
@@ -171,6 +177,8 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
         // 設定 disabled 的預設值
         scope.disabled = false;
         if ( attrs.disabled ) {
+          // 監聽 remove 是否改變，如果有改變則將 scope 的 remove 值變更
+          // scope.$parent 即為原始的 tab 物件
           scope.$parent.$watch($parse(attrs.disabled), function(value) {
             scope.disabled = !! value;
           });
@@ -199,11 +207,36 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
         // 等建立 tab content 內容時再執行建立
         scope.$transcludeFn = transclude;
 
+        // 設定是否允許刪除的預設值
+        scope.removed = tabsetCtrl.canRemoveTab();
+        // if ( attrs.removed ) {
+        //   // 監聽 remove 是否改變，如果有改變則將 scope 的 remove 值變更
+        //   scope.$parent.$watch($parse(attrs.removed), function(value){
+        //     scope.removed = !! value;
+        //   })
+        // };
+
+        // tab 移除的事件處理
+        scope.remove = function(){
+          console.log( scope.removed );
+          if( scope.removed ) {
+            tabsetCtrl.removeTab(scope);
+            elm.remove();
+          }
+        }
+
+        // 監聽 Double Click 事件
         elm.bind('dblclick', function(event){
-          console.log( 'dblclick', scope.heading );
-          tabsetCtrl.removeTab(scope); 
-          elm.find('a').remove();
+          scope.remove();
+
+          // if( scope.removed ) {
+          //   tabsetCtrl.removeTab(scope);
+          //   scope.$apply(function(){
+          //     elm.remove();
+          //   });
+          // }
         });
+
       };
     }
   };
@@ -308,7 +341,9 @@ angular.module('ui.bootstrap.tabs', ["ui.bootstrap.tpls"])
 angular.module("template/tabs/tab.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("template/tabs/tab.html",
     "<li ng-class=\"{active: active, disabled: disabled}\">\n" +
-    "  <a ng-click=\"select()\" tab-heading-transclude>{{heading}}</a>\n" +
+    "  <a ng-click=\"select()\" tab-heading-transclude style=\"display: inline-block;\">{{heading}}\n" +
+    "    <button class=\"btn btn-link\" style=\"padding: 6px 3px; margin-top: -5px;\" ng-show=\"removed\" ng-click=\"remove()\"><i class=\"glyphicon glyphicon-remove\"></i></button>\n" +
+    "  </a>" +
     "</li>\n" +
     "");
 }]);

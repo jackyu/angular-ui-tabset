@@ -35,8 +35,8 @@
     
     
     <!-- Tab 結果顯示 -->
-    <tabset>
-      <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
+    <tabset removed="true">
+      <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled" removed="tab.removed">
         {{tab.content}}
       </tab>
     </tabset>
