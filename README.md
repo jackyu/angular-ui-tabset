@@ -6,7 +6,10 @@
 
 - double click tab: 移除 tab 和對應內容
 - 點擊 tab 右方的 x 圖示: 移除 tab 和對應內容
-- need_remove: boolean，true 表示加上移除功能，false 表示不加上移除功能
+
+- tabset 新增 removed 屬性
+	* true: 表示其下的 tab 都會顯示刪除圖示，可點擊刪除
+	* false: 表示其下的 tab 都不會顯示刪除圖示，無法被刪除
 
 ### 執行方式
 
